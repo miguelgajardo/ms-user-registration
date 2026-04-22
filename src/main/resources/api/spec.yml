@@ -1,0 +1,210 @@
+openapi: 3.0.3
+info:
+  title: ms-banking-users
+  version: 1.0.0
+  description: API RESTful para registro y gestión de usuarios. Microservicio de creación de usuarios con autenticación JWT.
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+tags:
+  - name: users
+    description: Operaciones de registro y gestión de usuarios
+paths:
+  /api/v1/users:
+    post:
+      tags:
+        - users
+      summary: Registrar nuevo usuario
+      description: >
+        Crea un nuevo usuario en el sistema. Valida formato de correo (@dominio.cl),
+        formato de contraseña (una mayúscula, letras minúsculas, dos números),
+        y unicidad del correo electrónico. Retorna el usuario creado con su token JWT.
+      operationId: registerUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+            example:
+              name: Juan Rodriguez
+              email: juan@dominio.cl
+              password: Hunter12
+              phones:
+                - number: "1234567"
+                  citycode: "1"
+                  contrycode: "57"
+      responses:
+        '201':
+          description: Usuario creado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+              example:
+                id: 550e8400-e29b-41d4-a716-446655440000
+                name: Juan Rodriguez
+                email: juan@dominio.cl
+                phones:
+                  - number: "1234567"
+                    citycode: "1"
+                    contrycode: "57"
+                created: "2024-01-15T10:30:00"
+                modified: "2024-01-15T10:30:00"
+                last_login: "2024-01-15T10:30:00"
+                token: eyJhbGciOiJIUzI1NiJ9...
+                isactive: true
+        '400':
+          description: Datos de entrada inválidos (formato de correo o contraseña incorrecto)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                mensaje: "El formato del correo no es válido"
+        '409':
+          description: El correo ya se encuentra registrado en el sistema
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                mensaje: "El correo ya registrado"
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                mensaje: "Error interno del servidor"
+
+components:
+  schemas:
+
+    UserRequest:
+      title: UserRequest
+      type: object
+      required:
+        - name
+        - email
+        - password
+        - phones
+      properties:
+        name:
+          type: string
+          description: Nombre completo del usuario
+          minLength: 3
+          maxLength: 50
+          pattern: '^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$'
+          example: Juan Rodriguez
+        email:
+          type: string
+          description: Correo electrónico. Debe seguir el formato aaaaaaa@dominio.cl
+          format: email
+          pattern: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.cl$'
+          example: juan@dominio.cl
+          maxLength: 50
+        password:
+          type: string
+          description: >
+            Contraseña del usuario. Debe contener al menos una letra mayúscula,
+            letras minúsculas y al menos dos números.
+          minLength: 8
+          maxLength: 30
+          pattern: '^(?=.*[A-Z])(?=.*[a-z])(?=.*\d.*\d).+$'
+          example: Hunter12
+        phones:
+          type: array
+          description: Listado de teléfonos asociados al usuario
+          minItems: 1
+          maxItems: 5
+          items:
+            $ref: '#/components/schemas/PhoneRequest'
+
+    PhoneRequest:
+      title: PhoneRequest
+      type: object
+      required:
+        - number
+        - citycode
+        - contrycode
+      properties:
+        number:
+          type: string
+          description: Número de teléfono
+          minLength: 7
+          maxLength: 15
+          pattern: '^\d+$'
+          example: "1234567"
+        citycode:
+          type: string
+          description: Código de ciudad
+          minLength: 1
+          maxLength: 5
+          pattern: '^\d+$'
+          example: "1"
+        contrycode:
+          type: string
+          description: Código de país
+          minLength: 1
+          maxLength: 4
+          pattern: '^\d+$'
+          example: "57"
+
+    UserResponse:
+      title: UserResponse
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Identificador único del usuario generado por el sistema
+          example: 550e8400-e29b-41d4-a716-446655440000
+        name:
+          type: string
+          description: Nombre completo del usuario
+          example: Juan Rodriguez
+        email:
+          type: string
+          description: Correo electrónico del usuario
+          example: juan@dominio.cl
+        phones:
+          type: array
+          description: Listado de teléfonos asociados al usuario
+          items:
+            $ref: '#/components/schemas/PhoneRequest'
+        created:
+          type: string
+          format: date-time
+          description: Fecha y hora de creación del usuario
+          example: "2024-01-15T10:30:00"
+        modified:
+          type: string
+          format: date-time
+          description: Fecha y hora de la última modificación del usuario
+          example: "2024-01-15T10:30:00"
+        last_login:
+          type: string
+          format: date-time
+          description: Fecha y hora del último ingreso. En nuevo registro coincide con created.
+          example: "2024-01-15T10:30:00"
+        token:
+          type: string
+          description: Token JWT de acceso a la API. Persiste junto al usuario.
+          example: eyJhbGciOiJIUzI1NiJ9...
+        isactive:
+          type: boolean
+          description: Indica si el usuario se encuentra habilitado en el sistema
+          example: true
+
+    ErrorResponse:
+      title: ErrorResponse
+      type: object
+      required:
+        - mensaje
+      properties:
+        mensaje:
+          type: string
+          description: Descripción del error ocurrido
+          example: "El correo ya registrado"

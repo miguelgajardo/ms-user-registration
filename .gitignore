@@ -1,0 +1,93 @@
+# Gradle
+/.gradle/
+/build/
+!gradle/wrapper/gradle-wrapper.jar
+.gradle/
+
+# IDE - Eclipse
+/.classpath
+/.project
+/.settings/
+/.wtpmodules/
+/bin/
+.metadata/
+*.swp
+*.sublime-*
+
+# IDE - IntelliJ IDEA
+/.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# IDE - Visual Studio Code
+/.vscode/
+/.factorypath
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+*.bak
+
+# Java
+*.class
+*.jar
+*.war
+*.ear
+*.log
+hs_err_pid*
+replay_pid*
+
+# Spring Boot
+application-local.yml
+application-dev.properties
+!application.yml
+!application.properties
+
+# H2 Database
+*.db
+*.mv.db
+*.trace.db
+data/
+
+# Logs
+/logs/
+*.log
+spring-boot-logger.log
+
+# Temporary files
+/tmp/
+/temp/
+*.tmp
+*.temp
+
+# Generated OpenAPI code (optional - decide if you want to commit generated code)
+# /build/generated/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Test reports
+/test-output/
+/test-results/
+
+# Package files
+*.zip
+*.tar.gz
+*.rar
+
+# Secrets and keys
+*.pem
+*.key
+*.p12
+*.keystore
+*.jks
+secrets/
