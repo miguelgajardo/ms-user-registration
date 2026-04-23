@@ -105,7 +105,7 @@ ms-user-registration/
 ### Clonar el repositorio
 
 ```bash
-git clone git@github.com:miguelgajardo/ms-user-registration.git
+git clone https://github.com/miguelgajardo/ms-user-registration.git
 cd ms-user-registration
 ```
 
