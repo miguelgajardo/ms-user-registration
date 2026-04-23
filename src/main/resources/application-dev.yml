@@ -1,0 +1,23 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+  application:
+    name: ms-user-registration
+server:
+  port: 8080
+  servlet:
+    context-path: /ms-user-registration
+ms-user-registration:
+  auth:
+    token:
+      secret: 7f3e4a2c1b8d9f0e5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a
+      expiration: 86400000  # 24 hours
+# SpringDoc OpenAPI UI
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+    tags-sorter: alpha
