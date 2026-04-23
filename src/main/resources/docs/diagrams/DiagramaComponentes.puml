@@ -1,0 +1,83 @@
+@startuml ms-user-registration-components
+!theme plain
+skinparam linetype ortho
+skinparam componentStyle rectangle
+
+skinparam package {
+    BorderColor #2C3E50
+    FontColor #2C3E50
+    FontStyle bold
+}
+
+skinparam component {
+    BackgroundColor #EBF5FB
+    BorderColor #2980B9
+    FontColor #1A252F
+}
+
+skinparam database {
+    BackgroundColor #E9F7EF
+    BorderColor #27AE60
+}
+
+skinparam actor {
+    BackgroundColor #FDFEFE
+    BorderColor #2C3E50
+}
+
+title <b>ms-user-registration</b>\nDiagrama de Arquitectura de Componentes
+
+actor "Cliente HTTP" as Client
+
+package "Contratos API" {
+    [spec.yml\n<OpenAPI 3.0.3>] as Spec
+    [UserRequest] as Request
+    [UserResponse] as Response
+    [ErrorResponse] as ErrorDTO
+}
+
+package "Capa Web" {
+    [UserController] as Controller
+    [GlobalExceptionHandler] as ExceptionHandler
+}
+
+package "Capa de Servicio" {
+    [UserService] as Service
+    [UserMapper] as Mapper
+}
+
+package "Capa de Dominio" {
+    [User\n<Aggregate Root>] as UserEntity
+    [Phone\n<Value Object>] as PhoneEntity
+}
+
+package "Capa de Infraestructura" {
+    [UserRepository\n<Spring Data JPA>] as Repository
+    [JwtUtil] as JWT
+    [PasswordEncoder\n<BCrypt>] as Encoder
+    database "H2 Database\n<In-Memory>" as H2
+}
+
+Client --> Controller : POST /api/v1/users
+Controller ..> ExceptionHandler : manejo de errores
+Controller --> Service : registerUser()
+Service --> Mapper : toEntity() / toResponse()
+Mapper ..> UserEntity
+Mapper ..> PhoneEntity
+Service --> Encoder : encode(password)
+Service --> JWT : generateToken()
+Service --> Repository : save() / existsByEmail()
+Repository --> H2 : SQL
+
+Spec ..> Request : define
+Spec ..> Response : define
+Spec ..> ErrorDTO : define
+Controller ..> Spec : implementa
+
+legend right
+  <b>Referencias</b>
+  ..> dependencia / uso
+  --> flujo principal
+endlegend
+
+@enduml

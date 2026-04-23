@@ -1,0 +1,77 @@
+@startuml ms-user-registration-sequence
+!theme plain
+
+skinparam sequence {
+    ArrowColor #2980B9
+    ActorBorderColor #2C3E50
+    LifeLineBorderColor #2980B9
+    ParticipantBackgroundColor #EBF5FB
+    ParticipantBorderColor #2980B9
+    ParticipantFontColor #1A252F
+    BoxBackgroundColor #F2F3F4
+    BoxBorderColor #BDC3C7
+}
+
+skinparam responseMessageBelowArrow true
+
+title <b>ms-user-registration</b>\nDiagrama de Secuencia — Registro de Usuario
+
+actor "Cliente HTTP" as Client
+participant "UserController" as Controller
+participant "GlobalExceptionHandler" as ExceptionHandler
+participant "UserService" as Service
+participant "UserMapper" as Mapper
+participant "PasswordEncoder" as Encoder
+participant "JwtUtil" as JWT
+participant "UserRepository" as Repository
+database "H2 Database" as H2
+
+Client -> Controller : POST /api/v1/users\n{ name, email, password, phones[] }
+
+Controller -> Controller : @Valid UserRequest\nvalidación estructura y formato
+
+alt Validación fallida
+    Controller -> ExceptionHandler : MethodArgumentNotValidException
+    ExceptionHandler --> Client : 400 Bad Request\n{ "mensaje": "..." }
+end
+
+Controller -> Service : registerUser(UserRequest)
+
+Service -> Repository : existsByEmail(email)
+Repository -> H2 : SELECT * FROM users\nWHERE email = ?
+H2 --> Repository : resultado
+Repository --> Service : boolean
+
+alt Email ya registrado
+    Service -> ExceptionHandler : EmailAlreadyExistsException
+    ExceptionHandler --> Client : 409 Conflict\n{ "mensaje": "El correo ya registrado" }
+end
+
+Service -> Mapper : toEntity(UserRequest)
+Mapper --> Service : User (sin id, sin fechas)
+
+Service -> Encoder : encode(password)
+Encoder --> Service : passwordHash (BCrypt)
+Service -> Service : user.setPassword(passwordHash)
+
+Service -> Repository : save(User)
+Repository -> H2 : INSERT INTO users ...\nINSERT INTO phones ...
+H2 --> Repository : User persistido\n(con UUID, timestamps via @PrePersist)
+Repository --> Service : User
+
+Service -> JWT : generateToken(user.getId(), user.getEmail())
+JWT --> Service : JWT token (signed HS256)
+
+Service -> Service : user.setToken(token)
+Service -> Repository : save(User)
+Repository -> H2 : UPDATE users SET token = ?
+H2 --> Repository : User actualizado
+Repository --> Service : User
+
+Service -> Mapper : toResponse(User)
+Mapper --> Service : UserResponse
+
+Service --> Controller : UserResponse
+Controller --> Client : 201 Created\n{ id, name, email, phones,\ncreated, modified, last_login,\ntoken, isactive }
+
+@enduml

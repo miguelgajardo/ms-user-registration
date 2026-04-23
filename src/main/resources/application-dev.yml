@@ -4,15 +4,32 @@ spring:
       on-profile: dev
   application:
     name: ms-user-registration
+  sql:
+    init:
+      mode: always
+  jpa:
+    hibernate:
+      ddl-auto: validate
 server:
   port: 8080
   servlet:
     context-path: /ms-user-registration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
 ms-user-registration:
   auth:
     token:
       secret: 7f3e4a2c1b8d9f0e5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a
       expiration: 86400000  # 24 hours
+logging:
+    level:
+      cl.banking.users: DEBUG
+      org.springframework.web: DEBUG
+    pattern:
+      console: "%d{HH:mm:ss} %-5level %logger{36} - %msg%n"
 # SpringDoc OpenAPI UI
 springdoc:
   api-docs:
