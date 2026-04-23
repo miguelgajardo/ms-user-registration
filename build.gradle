@@ -81,6 +81,7 @@ sourceSets {
 	main {
 		java {
 			srcDir "${buildDir}/generated/openapi/src/main/java"
+			srcDir "${buildDir}/generated/sources/annotationProcessor/java/main"
 		}
 	}
 }

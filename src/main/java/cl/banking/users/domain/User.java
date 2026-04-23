@@ -16,6 +16,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -72,5 +73,22 @@ public class User {
 	
 	@Column(nullable = false)
 	private Boolean isActive; 
+	
+	@PrePersist
+	protected void onCreate() {
+		LocalDateTime now = LocalDateTime.now();
+        if (createdAt == null) {
+            createdAt = now;
+        }
+        if (modifiedAt == null) {
+            modifiedAt = now;
+        }
+        if (lastLogin == null) {
+            lastLogin = now;
+        }
+        if (isActive == null) {
+            isActive = true;
+        }
+	}
 	
 }
