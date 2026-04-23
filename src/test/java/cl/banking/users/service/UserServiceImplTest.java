@@ -42,7 +42,7 @@ public class UserServiceImplTest {
 		request.setEmail("juan@dominio.cl");
 		when(userRepository.existsByEmail("juan@dominio.cl")).thenReturn(true);
 		assertThatThrownBy(() -> userService.registerUser(request)).isInstanceOf(EmailAlreadyExistsException.class)
-				.hasMessage("El correo ya registrado");
+				.hasMessage("El correo está registrado");
 
 		verify(userRepository, never()).save(any());
 	}
