@@ -296,11 +296,6 @@ Almacenado junto al usuario según el requisito del desafío. En un contexto de 
 | `dev` | `application-dev.yml` | Desarrollo local con H2 |
 | `default` | `application.yml` | Configuración base |
 
-### Variables de entorno
-
-| Variable | Default | Descripción |
-|---|---|---|
-| `TOKEN_SECRET` | *(hash predefinido)* | Clave secreta para firma JWT HS256 |
 
 ---
 
