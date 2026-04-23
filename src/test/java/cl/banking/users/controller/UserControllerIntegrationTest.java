@@ -71,7 +71,7 @@ public class UserControllerIntegrationTest {
 		mockMvc.perform(post(BASE_URL).contentType(MediaType.APPLICATION_JSON).content(requestJson))
 				.andExpect(status().isCreated());
 		mockMvc.perform(post(BASE_URL).contentType(MediaType.APPLICATION_JSON).content(requestJson))
-				.andExpect(status().isConflict()).andExpect(jsonPath("$.mensaje").value("El correo ya registrado"));
+				.andExpect(status().isConflict()).andExpect(jsonPath("$.mensaje").value("El correo está registrado"));
 	}
 
 	@Test

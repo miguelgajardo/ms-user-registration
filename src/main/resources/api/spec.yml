@@ -207,4 +207,4 @@ components:
         mensaje:
           type: string
           description: Descripción del error ocurrido
-          example: "El correo ya registrado"
+          example: "El correo está registrado"

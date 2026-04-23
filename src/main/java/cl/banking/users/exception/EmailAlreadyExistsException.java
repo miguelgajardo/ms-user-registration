@@ -8,7 +8,7 @@ public class EmailAlreadyExistsException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
     
-	private static final String DEFAULT_MESSAGE = "El correo ya está registrado";
+	private static final String DEFAULT_MESSAGE = "El correo está registrado";
 
     public EmailAlreadyExistsException() {
         super(DEFAULT_MESSAGE);
