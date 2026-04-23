@@ -51,6 +51,9 @@ dependencies {
 	testImplementation 'org.junit.platform:junit-platform-launcher'  
 	testCompileOnly 'org.projectlombok:lombok'
 	testAnnotationProcessor 'org.projectlombok:lombok'
+	
+	//Security
+	implementation 'org.springframework.security:spring-security-crypto'
 }
 
 // OpenAPI Generator Configuration
